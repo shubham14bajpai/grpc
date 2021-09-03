@@ -1,0 +1,20 @@
+[package]
+name = "grpc"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]] # Bin to run the Storage gRPC server
+name = "storage-server"
+path = "src/server.rs"
+
+[[bin]] # Bin to run the Storage gRPC client
+name = "storage-client"
+path = "src/client.rs"
+
+[dependencies]
+tonic = "0.5"
+prost = "0.8"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+
+[build-dependencies]
+tonic-build = "0.5"
