@@ -3,8 +3,8 @@ package storage;
 
 service Storage {
   rpc CreatePool (CreatePoolRequest) returns (Pool) {}
-  // rpc DestroyPool (DestroyPoolRequest) returns (Null) {}
-  // rpc ListPools (Null) returns (ListPoolsReply) {}
+  rpc DestroyPool (DestroyPoolRequest) returns (Null) {}
+  rpc ListPools (Null) returns (ListPoolsReply) {}
 }
 
 // Means no arguments or no return value.
@@ -30,12 +30,12 @@ message Pool {
   PoolType pooltype = 3;
 }
   
-// // Destroy pool arguments.
-// message DestroyPoolRequest {
-//   string name = 1;
-// }
+// Destroy pool arguments.
+message DestroyPoolRequest {
+  string name = 1;
+}
 
-// // List of pools and their properties.
-// message ListPoolsReply {
-//   repeated Pool pools = 1;
-// }
+// List of pools and their properties.
+message ListPoolsReply {
+  repeated Pool pools = 1;
+}
