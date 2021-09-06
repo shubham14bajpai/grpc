@@ -10,14 +10,24 @@ service Storage {
 // Means no arguments or no return value.
 message Null {}
 
+// PoolType of the storage pool
+enum PoolType {
+  Lvs = 0; // the pool is backed by spdk lvs
+  Lvm = 1; // the pool is backed by lvm vg
+}
+
 // Create pool arguments.
 message CreatePoolRequest {
   string name = 1;
+  repeated string disk = 2;
+  PoolType pooltype = 3;
 }
   
 // Storage pool properties
 message Pool {
   string name = 1; 
+  repeated string disk = 2;
+  PoolType pooltype = 3;
 }
   
 // // Destroy pool arguments.

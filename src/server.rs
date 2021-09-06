@@ -7,7 +7,6 @@ pub mod storage {
     tonic::include_proto!("storage");
 }
 
-
 #[derive(Debug, Default)]
 pub struct MyStorage {}
 
@@ -18,11 +17,14 @@ impl Storage for MyStorage {
         request: Request<CreatePoolRequest>,
     ) -> Result<Response<Pool>, Status> { 
         println!("Got a request: {:?}", request);
-
+        
+        let args = request.into_inner();
+        
         let reply = storage::Pool {
-            name: request.into_inner().name,
+            name: args.name,
+            disk: args.disk,
+            pooltype: args.pooltype,
         };
-
         Ok(Response::new(reply))
     }
 }
