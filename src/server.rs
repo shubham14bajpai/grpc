@@ -1,66 +1,25 @@
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::transport::Server;
 
-use storage::storage_server::{Storage, StorageServer};
-use storage::{CreatePoolRequest, DestroyPoolRequest, ListPoolsReply, Null, Pool, PoolType};
+use storage_v1::StorageSvc1;
+mod storage_v1;
+use crate::storage_v1::storage_server::StorageServer as StorageServer1;
 
-pub mod storage {
-    tonic::include_proto!("storage");
-}
+use storage_v2::StorageSvc2;
+mod storage_v2;
+use crate::storage_v2::storage_server::StorageServer as StorageServer2;
 
-#[derive(Debug, Default)]
-pub struct MyStorage {}
-
-#[tonic::async_trait]
-impl Storage for MyStorage {
-    async fn create_pool(
-        &self,
-        request: Request<CreatePoolRequest>,
-    ) -> Result<Response<Pool>, Status> {
-        println!("Got a create request: {:?}", request);
-
-        let args = request.into_inner();
-
-        let reply = Pool {
-            name: args.name,
-            disk: args.disk,
-            pooltype: args.pooltype,
-        };
-        Ok(Response::new(reply))
-    }
-
-    async fn destroy_pool(
-        &self,
-        request: Request<DestroyPoolRequest>,
-    ) -> Result<Response<Null>, Status> {
-        println!("Got a destroy request: {:?}", request);
-
-        let _args = request.into_inner();
-
-        let reply = Null {};
-        Ok(Response::new(reply))
-    }
-
-    async fn list_pools(&self, request: Request<Null>) -> Result<Response<ListPoolsReply>, Status> {
-        println!("Got a list request: {:?}", request);
-
-        let reply = ListPoolsReply {
-            pools: vec![Pool {
-                name: "tpool".to_string(),
-                disk: vec![],
-                pooltype: PoolType::Lvm as i32,
-            }],
-        };
-        Ok(Response::new(reply))
-    }
-}
+mod pool;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
-    let storage = MyStorage::default();
+    let svc1 = StorageSvc1::default();
+    let svc2 = StorageSvc2::default();
 
     Server::builder()
-        .add_service(StorageServer::new(storage))
+        .add_service(StorageServer1::new(svc1))
+        .add_service(StorageServer2::new(svc2))
+        .
         .serve(addr)
         .await?;
 
